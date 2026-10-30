@@ -6,9 +6,10 @@ const screenshotFeedback = [
  {slot:'Jett',left:56.9,summary:'Players often praise this teammate’s aim.',tags:['Strong aim']},
  {slot:'Cypher',left:63.9,summary:'Players often say that this player doesn’t communicate often.',tags:['Rarely uses comms']}
 ];
-function renderBoard(){screen.innerHTML=`<section aria-label="Interactive agent select screenshot" class="screenshot-board"><div class="screenshot-frame"><img src="assets/agent-select-blurred.webp" width="1919" height="1079" alt="VALORANT agent select illustration; teammate names blurred. Squadnote supports Competitive only."><span class="hover-prompt">Hover or tap a glowing orb</span>${screenshotFeedback.map((p,i)=>`<button class="orb shot-orb color" style="left:${p.left}%;top:74.1%" data-orb="${i}" aria-label="Open feedback for ${p.slot} slot" aria-expanded="false"><span></span></button>`).join('')}<div id="summary-lane"></div></div></section>`;}
+function renderBoard(){screen.innerHTML=`<section aria-label="Interactive agent select screenshot" class="screenshot-board"><div class="screenshot-frame"><img src="assets/agent-select-blurred.webp" width="1919" height="1079" alt="VALORANT agent select illustration; teammate names blurred. Squadnote supports Competitive only."><svg class="orb-arrow" viewBox="0 0 1919 1079" aria-hidden="true"><path d="M565 650 Q679 657 683 778 M670 764 L683 778 L695 762"/></svg>${screenshotFeedback.map((p,i)=>`<button class="orb shot-orb color" style="left:${p.left}%;top:74.1%" data-orb="${i}" aria-label="Open feedback for ${p.slot} slot" aria-expanded="false"><span></span></button>`).join('')}<span class="image-wordmark">squadnote.</span><div id="summary-lane"></div></div></section>`;}
 function summaryCard(){if(activeOrb===null)return '';const p=screenshotFeedback[activeOrb];return `<article id="summary-card" class="summary-card" aria-label="Feedback for ${p.slot} slot"><div><span class="wordmark">squadnote.</span><button id="close-card" aria-label="Close summary">×</button></div><p>${p.summary}</p></article>`;}
 function updateCard(){
+ document.querySelector('.screenshot-frame').classList.toggle('has-summary',activeOrb!==null);
  document.querySelector('#summary-lane').innerHTML=summaryCard();
  document.querySelectorAll('[data-orb]').forEach(b=>b.setAttribute('aria-expanded',Number(b.dataset.orb)===activeOrb));
 
@@ -26,4 +27,5 @@ document.addEventListener('click',e=>{
  if(activeOrb!==null&&(!e.target.closest('.summary-card')||b?.id==='close-card')){activeOrb=null;based=false;updateCard();}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeOrb!==null){activeOrb=null;based=false;updateCard();}});
+window.addEventListener('scroll',()=>{if(activeOrb!==null){activeOrb=null;updateCard();}},{passive:true});
 renderBoard();
